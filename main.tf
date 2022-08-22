@@ -6,7 +6,7 @@ provider "aws" {
 }
 
 module "s3" {
-    source = "/home/geric/Desktop/learning/Devops/AutoScale/S3"
+    source = "/home/geric/Desktop/learning/Devops/AutoScale/S3/website"
     #bucket name should be unique
     bucket_name = "awsricscaling"       
 }
