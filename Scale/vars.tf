@@ -1,5 +1,5 @@
 variable "vpc-id" {
-  default = "vpc-0769f145fbf725d53"
+  default = "vpc-06ecbdb717cae7945"
 }
 variable "ami-id" {
   default = "ami-0729e439b6769d6ab"
