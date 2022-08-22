@@ -8,9 +8,9 @@ resource "aws_s3_bucket_acl" "demos3_acl" {
 }
 
 resource "aws_s3_bucket_object" "demos3_object" {
-  for_each = fileset("./S3/website/", "**")
+  for_each = fileset("./website/", "**")
   bucket   = aws_s3_bucket.demos3.bucket
   key      = each.value
-  source   = "./S3/website/${each.value}"
-  etag     = filemd5("./S3/website/${each.value}")
+  source   = "./website/${each.value}"
+  etag     = filemd5("./website/${each.value}")
 }
