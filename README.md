@@ -30,3 +30,6 @@ export ANSIBLE_HOST_KEY_CHECKING=False
 '''
 ansible-playbook play.yml --ssh-common-args='-o StrictHostKeyChecking=no'
 '''
+
+## Working with Git
+change PasswordAuthentication yes in sshd_config 
