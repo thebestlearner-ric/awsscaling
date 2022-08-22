@@ -13,5 +13,9 @@ git push -u origin main
 Description: within .gitignore file does not ignore .terraform folder
 Way to resolve:
 '''
+git add .
+git commit -m "text you want to add"
 git filter-branch -f --index-filter 'git rm --cached -r --ignore-unmatch .terraform/'
+git push 
 ''' 
+ref: https://github.com/hashicorp/terraform-guides/issues/92
