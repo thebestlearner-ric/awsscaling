@@ -22,6 +22,21 @@ resource "aws_security_group" "fleetAaccess" {
   }
 }
 
+data "aws_availability_zones" "all" {}
+
+resource "aws_launch_configuration" "asg-launch-config" {
+	image_id = var.ami-id
+	instance_type = var.instance_type
+	security_groups = [aws_security_group.fleetAaccess.id]
+
+	provisioner "remote-exec" {
+		inline = [
+			"sudo amazon-linux-extras install -y nginx1.12",
+			"sudo systemctl start nginx"
+		]
+	}
+}
+
 resource "aws_instance" "webserver" {
   ami                         = var.ami-id
   instance_type               = var.instance_type
@@ -47,6 +62,27 @@ resource "aws_instance" "webserver" {
   provisioner "local-exec" {
     command = "ansible-playbook -i Scale/ansible/myhosts --user ${var.ssh_user} --private-key ${var.private_key_path} Scale/ansible/playbook.yml"
   }
+}
+# Creating the autoscaling group within us-east-1a availability zone
+resource "aws_autoscaling_group" "autoscalefleetA" {
+# Defining the availability Zone in which AWS EC2 instance will be launched
+  availability_zones        = ["us-east-1a"]
+# Specifying the name of the autoscaling group
+  name                      = "fleetA"
+# Defining the maximum number of AWS EC2 instances while scaling
+  max_size                  = 6
+# Defining the minimum number of AWS EC2 instances while scaling
+  min_size                  = 3
+# Grace period is the time after which AWS EC2 instance comes into service before checking health.
+  health_check_grace_period = 30
+# The Autoscaling will happen based on health of AWS EC2 instance defined in AWS CLoudwatch Alarm 
+  health_check_type         = "EC2"
+# force_delete deletes the Auto Scaling Group without waiting for all instances in the pool to terminate
+  force_delete              = true
+# Defining the termination policy where the oldest instance will be replaced first 
+  termination_policies      = ["OldestInstance"]
+# Scaling group is dependent on autoscaling launch configuration because of AWS EC2 instance configurations
+  launch_configuration      = aws_launch_configuration.asg-launch-config.name
 }
 
 output "instance_ip" {
