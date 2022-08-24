@@ -1,5 +1,5 @@
 variable "vpc-id" {
-  default = "vpc-06ecbdb717cae7945"
+  default = "vpc-04f51ec875d57c1a7"
 }
 variable "ami-id" {
   default = "ami-0cabc39acf991f4f1" # Amazon Linux 2 AMI (HVM) - Kernel 4.14, SSD Volume Type

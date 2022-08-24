@@ -13,4 +13,5 @@ module "s3" {
 
 module "Scale" {
   source = "/home/geric/Desktop/learning/Devops/AutoScale/Scale/"
+  region = "${var.region}"
 }
