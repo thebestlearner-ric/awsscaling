@@ -21,6 +21,3 @@ services:
 # Names our volume
 volumes:
   my-db: local
-
-  git config --global user.email "watto1990@gmail.com"
-  git config --global user.name "thebestlearner-ric"
