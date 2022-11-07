@@ -78,17 +78,17 @@ data "aws_availability_zones" "all" {}
 #     command = "ansible-playbook -i Scale/ansible/myhosts --user ${var.ssh_user} --private-key ${var.private_key_path} Scale/ansible/playbook.yml"
 #   }
 # }
-provider "shell" {
-    interpreter = ["/bin/sh", "-c"]
-    enable_parallelism = false
-}
+# provider "shell" {
+#     interpreter = ["/bin/sh", "-c"]
+#     enable_parallelism = false
+# }
 
 resource "aws_launch_configuration" "asg-launch-config" {
   image_id        = var.ami-id
   instance_type   = var.instance_type
   security_groups = [aws_security_group.fleetAaccess.id]
   key_name        = var.key_name
-  user_data = file(Scale/install_nginx.sh)
+  user_data = file("Scale/install_nginx.sh")
 	lifecycle {
 		create_before_destroy = true
 	}

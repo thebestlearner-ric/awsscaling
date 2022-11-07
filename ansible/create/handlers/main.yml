@@ -1,2 +1,16 @@
 ---
 # handlers file for create
+handlers:
+  - name: restart ssh
+    service:
+      name=sshd
+      state=restarted
+  - name: restart docker
+    service:
+      name=docker
+      state=restarted
+  - name: restart kubernetes
+    service:
+      name=kubernetes
+      state=restarted
+      

@@ -6,12 +6,12 @@ provider "aws" {
 }
 
 module "s3" {
-    source = "/home/geric/Desktop/learning/Devops/AutoScale/S3/"
+    source = "/Users/Geric/Desktop/Learning/Devops/AutoScale/S3"
     #bucket name should be unique
     bucket_name = "awsricscaling"       
 }
 
 module "Scale" {
-  source = "/home/geric/Desktop/learning/Devops/AutoScale/Scale/"
+  source = "/Users/Geric/Desktop/Learning/Devops/AutoScale/Scale"
   region = "${var.region}"
 }
