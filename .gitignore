@@ -1,6 +1,7 @@
-scalekey.pem
+mykey.pem
 *.tfstate
 *.tfstate.backup
 .terraform
 .terraform/*
 .terraform.lock.hcl
+variable.tf
