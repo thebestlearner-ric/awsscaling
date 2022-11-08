@@ -2,16 +2,17 @@ provider "aws" {
     access_key = "${var.aws_access_key}"
     secret_key = "${var.aws_secret_key}"
     region = "${var.region}"
-    token = "${var.token}"
+    # token = "${var.token}"
 }
 
 module "s3" {
-    source = "/Users/Geric/Desktop/Learning/Devops/AutoScale/S3"
+    source = "./S3"
     #bucket name should be unique
-    bucket_name = "awsricscaling"       
+    bucket_name = "autoscaling-ric"       
 }
 
 module "Scale" {
-  source = "/Users/Geric/Desktop/Learning/Devops/AutoScale/Scale"
+  # source = "/Users/Geric/Desktop/Learning/Devops/AutoScale/Scale"
+  source = "./Scale"
   region = "${var.region}"
 }
