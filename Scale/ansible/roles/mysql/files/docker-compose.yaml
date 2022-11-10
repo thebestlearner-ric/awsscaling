@@ -1,0 +1,19 @@
+version: "3.3"
+services:
+  db:
+    image: mysql:latest                   #Specify the version of mysql
+    container_name: testing_mysql
+    ports:
+      - "3306:3306"                    #Specify the port to start DB
+    restart: on-failure
+    environment:
+      - MYSQL_ROOT_USER=root
+      - MYSQL_PASSWORD=
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes #Allow no password
+    volumes:
+      - mysql-db-data:/var/lib/mysql   #Data persistence
+    tty: true                          #Keep starting the container
+volumes:
+  mysql-db-data:
+    driver: local

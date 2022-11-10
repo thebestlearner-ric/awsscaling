@@ -1,7 +1,6 @@
 ---
 # handlers file for docker
-- handlers:
-  - name: Restart docker
-    ansible.builtin.service:
-      name: docker
-      state: restarted
+- name: Restart docker
+  ansible.builtin.service:
+    name: docker
+    state: restarted

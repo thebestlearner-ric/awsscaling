@@ -1,0 +1,4 @@
+---
+# tasks file for mysql
+- name: Run mysql
+# TODO: run docker compose and verify that docker image is working

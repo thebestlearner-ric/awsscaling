@@ -1,9 +1,0 @@
-- hosts: "{{ myhost | default('nginx')}}"
-#- hosts: all
-  become: true
-  vars:
-    wp_webserver: nginx
-    wp_sitename: example.com
-    wp_install_dir: "/var/www/example.com"
-  roles:
-    - ansible-nginx
