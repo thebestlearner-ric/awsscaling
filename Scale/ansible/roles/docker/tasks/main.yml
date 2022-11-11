@@ -55,13 +55,22 @@
   stat: path=~/docker-compose
   register: docker_compose
 
+- name: Make docker directory
+  ansible.builtin.shell: 
+    mkdir -p ~/docker
+
+- name: Copy docker compose file 
+  ansible.builtin.template:
+    src: templates/docker-compose.yaml
+    dest: docker-compose.yaml
+    owner: "{{ansible_user}}"
+    group: docker
+    mode: '0644'
+
 - name: Move docker-compose to /usr/local/bin/docker-compose
   command: mv ~/docker-compose /usr/local/bin/docker-compose
   when: docker_compose.stat.exists
   notify:
     - Restart docker
 
-- name: Copy docker compose file 
-  ansible.builtin.template:
-    - src: files/docker-compose.yaml
-    - dist: /opt/compose/docker-compose.yaml
+

@@ -5,3 +5,7 @@ variable "bucket_name" {
 variable "acl_value" {
     default = "private"
 }
+
+variable "iam_user_id" {
+    type = string 
+}

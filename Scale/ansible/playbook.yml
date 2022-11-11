@@ -1,0 +1,15 @@
+# - hosts: "{{ myhost | default('nginx')}}"
+- hosts: all
+  become: true
+  gather_facts: false
+  vars:
+    username: ubuntu
+  #   wp_webserver: nginx
+  #   wp_sitename: example.com
+  #   wp_install_dir: "/var/www/example.com"
+  roles:
+    # - ansible-nginx
+    # - create-user
+    # - packages
+    # - docker
+    - kube

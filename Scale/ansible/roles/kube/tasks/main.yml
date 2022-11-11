@@ -1,22 +1,20 @@
 ---
 # tasks file for kube
-
 - name: create Docker config directory
   file: path=/etc/docker state=directory
 
 - name: changing Docker to systemd driver
   copy:
-  dest: "/etc/docker/daemon.json"
-  content: |
-    {
-    "exec-opts": ["native.cgroupdriver=systemd"]
-    }
-
-- name: install Docker
-  apt:
-    name: docker.io
-    state: present
-    update_cache: true
+    dest: "/etc/docker/daemon.json"
+    content: |
+      {
+        "exec-opts": ["native.cgroupdriver=systemd"],
+        "log-driver": "json-file",
+        "log-opts": {
+        "max-size": "100m"
+        },
+        "storage-driver": "overlay2"
+      }
 
 - name: install APT Transport HTTPS
   apt:
@@ -30,33 +28,62 @@
 
 - name: add Kubernetes' APT repository
   apt_repository:
-  repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
-  state: present
-  filename: 'kubernetes'
-
-- name: install kubelet
-  apt:
-    name: kubelet=1.22.4-00
+    repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
     state: present
-    update_cache: true
+    filename: "kubernetes"
 
-- name: install kubeadm
+- name: Install Kubernetes (kubelet, kubeadm, kubernetes-cni)
   apt:
-    name: kubeadm=1.22.4-00
+    name: "{{ packages }}"
     state: present
-  
+    update_cache: yes
+  vars:
+    packages:
+      - kubelet=1.22.4-00
+      - kubeadm=1.22.4-00
+      - kubernetes-cni
+
+- name: update iptables to see bridged traffic
+  ansible.builtin.shell: |
+    cat << EOF | sudo tee /etc/sysctl.d/k8s.conf
+      net.bridge.bridge-nf-call-ip6tables = 1
+      net.bridge.bridge-nf-call-iptables = 1
+    EOF
+
+- name: disable swap
+  ansible.builtin.shell: |
+    sudo swapoff -a
+    sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+- name: make kubernetes directory
+  ansible.builtin.shell: mkdir -p k8s
+
   # if this method (when) does not work use the (delegate_to) method
 - name: install kubectl on control plane
-  when: inventory_hostname in groups['control_plane']
+  when: inventory_hostname in groups['control']
   apt:
     name: kubectl=1.22.4-00
     state: present
     force: yes
-    
+
+- name: Set hostname on control
+  when: inventory_hostname in groups['control']
+  ansible.builtin.shell: sudo hostnamectl set-hostname control-plane 
+
+- name: Set hostname on worker 1
+  when: inventory_hostname in groups['worker1']
+  ansible.builtin.shell: sudo hostnamectl set-hostname worker1
+
+- name: Set hostname on worker 2
+  when: inventory_hostname in groups['worker2']
+  ansible.builtin.shell: sudo hostnamectl set-hostname worker2
+
+- include: deploy.yml
+  
 # if this method (delegate_to) does not work use the (when) method
-- name: install kubectl on control plane
-  delegate_to: control_plane
-  apt:
-    name: kubectl=1.22.4-00
-    state: present
-    force: yes
+# - name: install kubectl on control plane
+#   delegate_to: control
+#   apt:
+#     name: kubectl=1.22.4-00
+#     state: present
+#     force: yes

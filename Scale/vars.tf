@@ -1,8 +1,8 @@
 variable "vpc-id" {
-  default = "vpc-044bc07b956025a62"
+  default = "vpc-0519697bb9628db83"
 }
 variable "ami-id" {
-  default = "ami-0cabc39acf991f4f1" # Amazon Linux 2 AMI (HVM) - Kernel 4.14, SSD Volume Type
+  default = "ami-0149b2da6ceec4bb0" # Ubuntu Server 20.04 LTS (HVM), SSD Volume Type (64-bit (x86))
 }
 variable "private_key_path" {
   default = "./mykey.pem"
@@ -14,5 +14,5 @@ variable "key_name" {
   default = "mykey"
 }
 variable "instance_type" {
-  default = "t2.micro"
+  default = "t3.micro"
 }
