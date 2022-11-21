@@ -37,10 +37,13 @@
     name: "{{ packages }}"
     state: present
     update_cache: yes
+    allow_downgrade: yes
   vars:
     packages:
-      - kubelet=1.22.4-00
-      - kubeadm=1.22.4-00
+      # - kubelet=1.22.4-00
+      - kubelet
+      # - kubeadm=1.22.4-00
+      - kubeadm
       - kubernetes-cni
 
 - name: update iptables to see bridged traffic
@@ -50,10 +53,28 @@
       net.bridge.bridge-nf-call-iptables = 1
     EOF
 
-- name: disable swap
+- name: enable iptables
+  ansible.builtin.shell: sudo sysctl --system
+
+- name: disable swap and make persistent 
   ansible.builtin.shell: |
     sudo swapoff -a
     sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+- name: Comment cri in containerd configuration file
+  become: true
+  replace: 
+    path: /etc/containerd/config.toml 
+    regexp: 'disabled_plygins = ["cri"]'
+    replace: '#disabled_plygins = ["cri"]'
+
+- name: Restart docker and kubernetes services
+  ansible.builtin.shell: |
+    sudo systemctl enable docker
+    sudo systemctl daemon-reload
+    sudo systemctl restart docker
+    sudo systemctl restart containerd
+
 
 - name: make kubernetes directory
   ansible.builtin.shell: mkdir -p k8s
@@ -62,7 +83,8 @@
 - name: install kubectl on control plane
   when: inventory_hostname in groups['control']
   apt:
-    name: kubectl=1.22.4-00
+    # name: kubectl=1.22.4-00
+    name: kubectl
     state: present
     force: yes
 

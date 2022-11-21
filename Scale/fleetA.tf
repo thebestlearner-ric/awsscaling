@@ -184,7 +184,7 @@ resource "aws_instance" "kube_controller" {
   ami                         = var.ami-id
   instance_type               = var.instance_type
   associate_public_ip_address = true
-  vpc_security_group_ids      = [aws_security_group.fleetAControlaccess.id]
+  vpc_security_group_ids      = [aws_security_group.fleetAControlaccess.id, aws_security_group.fleetAaccess.id]
   key_name                    = var.key_name
   lifecycle {
 		create_before_destroy = true
@@ -194,10 +194,10 @@ resource "aws_instance" "kube_controller" {
 resource "aws_launch_configuration" "asg-launch-config" {
   image_id        = var.ami-id
   instance_type   = var.instance_type
-  security_groups = [aws_security_group.fleetAaccess.id]
+  security_groups = [aws_security_group.fleetAControlaccess.id, aws_security_group.fleetAaccess.id]
   key_name        = var.key_name
   associate_public_ip_address = true
-  user_data = file("Scale/install_nginx.sh")
+  # user_data = file("Scale/install_nginx.sh")
   # user_data = file("Scale/get_ag_ip.sh")
 	lifecycle {
 		create_before_destroy = true
@@ -227,6 +227,6 @@ resource "aws_autoscaling_group" "autoscalefleetA" {
   launch_configuration = aws_launch_configuration.asg-launch-config.name  
 }
 
-output "instance_ip" {
-  value = aws_instance.kube_controller.public_ip
-}
+# output "instance_ip" {
+#   value = aws_instance.kube_controller.public_ip
+# }

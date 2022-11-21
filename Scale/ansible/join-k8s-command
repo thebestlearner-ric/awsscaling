@@ -1,0 +1,1 @@
+kubeadm join 172.31.36.46:6443 --token vhr6ma.ayojgjsxjgwwsbhi --discovery-token-ca-cert-hash sha256:1bd4912d066410998553238761a96dea360e8ae29af07e9773f597e1ed7a872c 

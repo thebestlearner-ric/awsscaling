@@ -2,9 +2,13 @@
 # deploy.yml for kubernetes deployment configuration
 - name: Debian | Configure K8S Master Block
   block:
+  # - name: Debian | Reset Kubernetes Admin
+  #   become: true
+  #   command: sudo kubeadm reset -y
+
   - name: Debian | Initialise the Kubernetes cluster using kubeadm
     become: true
-    command: kubeadm init --pod-network-cidr={{ k8s_pod_network }} --ignore-preflight-errors=all
+    command: sudo kubeadm init --pod-network-cidr={{ k8s_pod_network }} --ignore-preflight-errors=all
     args:
       creates: "{{ k8s_admin_config }}"
 

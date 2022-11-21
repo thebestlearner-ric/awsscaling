@@ -34,6 +34,7 @@
     name: "{{ packages }}"
     state: present
     update_cache: yes
+    allow_downgrade: yes
   vars:
     packages:
     - docker-ce
