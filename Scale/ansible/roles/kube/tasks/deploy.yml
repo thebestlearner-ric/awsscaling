@@ -122,6 +122,12 @@
   - name: Debian | Copy join command to local file
     become: false
     local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="{{ k8s_token_file }}"
+  
+  - name: Debian | Suppress preflight errors
+    replace: 
+      path: "{{ k8s_token_file }}"
+      regexp: ' $'
+      replace: '--ignore-preflight-errors=all'
   when: "'control' in group_names"
 
 - name: Debian | Configure K8S Node Block

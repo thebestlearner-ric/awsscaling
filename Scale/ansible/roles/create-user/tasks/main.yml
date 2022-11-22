@@ -11,7 +11,7 @@
     state: present
     key: "{{ item }}"
   with_file:
-    - mykey.pub
+    - ~/.ssh/id_ed25519.pub
 - lineinfile:
     path: /etc/sudoers
     state: present
