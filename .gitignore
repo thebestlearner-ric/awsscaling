@@ -5,5 +5,5 @@ mykey.pem
 .terraform/*
 .terraform.lock.hcl
 variable.tf
-vars.tf
+Scale/vars.tf
 *.pub
