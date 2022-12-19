@@ -63,7 +63,7 @@
 
 - name: Comment cri in containerd configuration file
   become: true
-  replace: 
+  ansible.builtin.replace: 
     path: /etc/containerd/config.toml 
     regexp: 'disabled_plygins = ["cri"]'
     replace: '#disabled_plygins = ["cri"]'
