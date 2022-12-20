@@ -63,10 +63,17 @@
 
 - name: Comment cri in containerd configuration file
   become: true
-  ansible.builtin.replace: 
-    path: /etc/containerd/config.toml 
-    regexp: 'disabled_plygins = ["cri"]'
-    replace: '#disabled_plygins = ["cri"]'
+  lineinfile:
+    path: /etc/containerd/config.toml
+    regexp: 'disabled_plugins = ["cri"]'
+    line: '# \1'
+    backrefs: yes
+    state: present
+    backup: yes
+  # ansible.builtin.replace: 
+  #   path: /etc/containerd/config.toml 
+  #   regexp: 'disabled_plugins = ["cri"]'
+  #   replace: '#disabled_plugins = ["cri"]'
 
 - name: Restart docker and kubernetes services
   ansible.builtin.shell: |

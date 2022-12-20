@@ -1,7 +1,7 @@
 ---
 # vars file for kube
-# k8s_pod_network: "192.168.192.0/18"
-k8s_pod_network: "172.31.0.0/16"
+k8s_pod_network: "192.168.192.0/18"
+# k8s_pod_network: "172.31.0.0/16"
 k8s_user: "ubuntu"
 k8s_user_home: "/home/{{ k8s_user }}"
 k8s_token_file: "join-k8s-command"
@@ -16,5 +16,5 @@ calico_net_url: "https://docs.projectcalico.org/v3.3/getting-started/kubernetes/
 calico_net_config: "calico.yaml"
 dashboard_url: "https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml"
 dashboard_config: "kubernetes-dashboard.yml"
-flannel_url: "https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
+
 
