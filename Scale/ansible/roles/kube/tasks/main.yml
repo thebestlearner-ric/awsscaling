@@ -63,13 +63,8 @@
 
 - name: Comment cri in containerd configuration file
   become: true
-  lineinfile:
-    path: /etc/containerd/config.toml
-    regexp: 'disabled_plugins = ["cri"]'
-    line: '# \1'
-    backrefs: yes
-    state: present
-    backup: yes
+  shell: |
+    cat /dev/null > /etc/containerd/config.toml
   # ansible.builtin.replace: 
   #   path: /etc/containerd/config.toml 
   #   regexp: 'disabled_plugins = ["cri"]'
