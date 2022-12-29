@@ -40,10 +40,10 @@
     allow_downgrade: yes
   vars:
     packages:
-      # - kubelet=1.22.4-00
-      - kubelet
-      # - kubeadm=1.22.4-00
-      - kubeadm
+      - kubelet=1.22.4-00
+      # - kubelet
+      - kubeadm=1.22.4-00
+      # - kubeadm
       - kubernetes-cni
 
 - name: update iptables to see bridged traffic
@@ -85,8 +85,8 @@
 - name: install kubectl on control plane
   when: inventory_hostname in groups['control']
   apt:
-    # name: kubectl=1.22.4-00
-    name: kubectl
+    name: kubectl=1.22.4-00
+    # name: kubectl
     state: present
     force: yes
 
@@ -102,7 +102,7 @@
   when: inventory_hostname in groups['worker2']
   ansible.builtin.shell: sudo hostnamectl set-hostname worker2
 
-- include: deploy.yml
+- include: kube.yml
   
 # if this method (delegate_to) does not work use the (when) method
 # - name: install kubectl on control plane

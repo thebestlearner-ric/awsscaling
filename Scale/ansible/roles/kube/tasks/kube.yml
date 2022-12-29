@@ -33,6 +33,11 @@
   #   become: false
   #   command: "kubectl apply -f {{ flannel_url }}"
   #   ignore_errors: true
+  
+  # - name: Installing Weave
+  #   become: false
+  #   command: "kubectl apply -f {{ weave_url }}"
+  #   ignore_errors: true
 
   - name: Debian | Download {{ calico_rbac_url }}
     get_url:
@@ -63,7 +68,17 @@
       owner: "{{ k8s_user }}"
       group: "{{ k8s_user }}"
       mode: "0640"     
+
+  - name: Debian | Create calico tigera operator 
+    become: false
+    command: kubectl create -f "{{ calico_tigera_operator_url }}"
+    ignore_errors: true
   
+  - name: Debian | Create calico custom_resources
+    become: false
+    command: kubectl create -f "{{ calico_custom_resources_url }}"
+    ignore_errors: true
+
   - name: Debian | Install calico pod network {{ calico_rbac_config }}
     become: false
     command: kubectl apply -f "{{ k8s_user_home }}/{{ calico_rbac_config }}"
@@ -144,14 +159,13 @@
   - name: Debian | Copy {{ k8s_token_file }} to server location
     copy: 
       src: "{{ k8s_token_file }}"
-      dest: "{{ k8s_user_home }}/{{ k8s_token_file }}.sh"
+      dest: "{{ k8s_user_home }}/{{ k8s_token_file }}"
       owner: "{{ k8s_user }}"
       group: "{{ k8s_user }}"
       mode: "0750"
 
   - name: Debian | Join the node to cluster unless file {{ k8s_kubelet_config }} exists
-    become: true
-    command: bash "{{ k8s_user_home }}/{{ k8s_token_file }}"
+    shell: sudo bash "{{ k8s_user_home }}/{{ k8s_token_file }}"
     ignore_errors: true
     args:
       creates: "{{ k8s_kubelet_config }}"
