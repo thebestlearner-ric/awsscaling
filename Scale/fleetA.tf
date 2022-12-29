@@ -40,7 +40,7 @@ resource "aws_security_group" "fleetAControlaccess" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
     description = "For kube-scheduler"
-  }  
+  }
   ingress {
     from_port   = 10257
     to_port     = 10257
@@ -61,6 +61,13 @@ resource "aws_security_group" "fleetAControlaccess" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
     description = "For mysql access"
+  }
+  ingress {
+    from_port   = 6443
+    to_port     = 6443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "For kubernetes dashboard access"
   }
   egress {
     from_port   = 0
@@ -187,21 +194,21 @@ resource "aws_instance" "kube_controller" {
   vpc_security_group_ids      = [aws_security_group.fleetAControlaccess.id, aws_security_group.fleetAaccess.id]
   key_name                    = var.key_name
   lifecycle {
-		create_before_destroy = true
-	}
+    create_before_destroy = true
+  }
 }
 
 resource "aws_launch_configuration" "asg-launch-config" {
-  image_id        = var.ami-id
-  instance_type   = var.instance_type
-  security_groups = [aws_security_group.fleetAControlaccess.id, aws_security_group.fleetAaccess.id]
-  key_name        = var.key_name
+  image_id                    = var.ami-id
+  instance_type               = var.instance_type
+  security_groups             = [aws_security_group.fleetAControlaccess.id, aws_security_group.fleetAaccess.id]
+  key_name                    = var.key_name
   associate_public_ip_address = true
   # user_data = file("Scale/install_nginx.sh")
   # user_data = file("Scale/get_ag_ip.sh")
-	lifecycle {
-		create_before_destroy = true
-	}
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # Creating the autoscaling group within us-east-1a availability zone
@@ -224,7 +231,7 @@ resource "aws_autoscaling_group" "autoscalefleetA" {
   # Defining the termination policy where the oldest instance will be replaced first 
   termination_policies = ["OldestInstance"]
   # Scaling group is dependent on autoscaling launch configuration because of AWS EC2 instance configurations
-  launch_configuration = aws_launch_configuration.asg-launch-config.name  
+  launch_configuration = aws_launch_configuration.asg-launch-config.name
 }
 
 # output "instance_ip" {
