@@ -19,7 +19,7 @@ new_dashboard_url: "https://raw.githubusercontent.com/kubernetes/dashboard/v2.6.
 dashboard_config: "kubernetes-dashboard.yml"
 flannel_url: "https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml"
 weave_url: "https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml"
-calico_tigera_operator_url: "https://docs.projectcalico.org/manifests/tigera-operator.yaml"
-calico_custom_resources_url: "https://docs.projectcalico.org/manifests/custom-resources.yaml"
+calico_tigera_operator_url: "https://raw.githubusercontent.com/projectcalico/calico/v3.24.5/manifests/tigera-operator.yaml"
+calico_custom_resources_url: "https://raw.githubusercontent.com/projectcalico/calico/v3.24.5/manifests/custom-resources.yaml"
 
 
