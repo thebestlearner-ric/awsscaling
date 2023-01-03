@@ -1,1 +1,2 @@
-kubeadm join 172.31.89.177:6443 --token vko5r8.etd2khn4u32bnkxp --discovery-token-ca-cert-hash sha256:d0935e6cbf9137fd056b6220e8ff82d6dce4cc0fbc8b6185a20359d25f0cb818
+kubeadm join 172.31.88.241:6443 --token wawff4.xtxl6o2riyvbi1zk --discovery-token-ca-cert-hash sha256:c5a6e63cc178abfa3d3a9a9b9bbc56e823e75aa52b50e28a47bb249e33df07fb
+--ignore-preflight-errors=all

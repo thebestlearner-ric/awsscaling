@@ -69,15 +69,15 @@
       group: "{{ k8s_user }}"
       mode: "0640"     
 
-  - name: Debian | Create calico tigera operator 
-    become: false
-    command: kubectl create -f "{{ calico_tigera_operator_url }}"
-    ignore_errors: true
+  # - name: Debian | Create calico tigera operator 
+  #   become: false
+  #   command: kubectl create -f "{{ calico_tigera_operator_url }}"
+  #   ignore_errors: true
   
-  - name: Debian | Create calico custom_resources
-    become: false
-    command: kubectl create -f "{{ calico_custom_resources_url }}"
-    ignore_errors: true
+  # - name: Debian | Create calico custom_resources
+  #   become: false
+  #   command: kubectl create -f "{{ calico_custom_resources_url }}"
+  #   ignore_errors: true
 
   - name: Debian | Install calico pod network {{ calico_rbac_config }}
     become: false
@@ -132,10 +132,6 @@
     retries: 10
     delay: 6
     until: result_k8s_dashboard_page is succeeded
-
-  - name: Debian | K8S dashboard URL
-    debug:
-      var: k8s_dashboard_url
   
   - name: Debian | Generate join command
     command: kubeadm token create --print-join-command
@@ -147,11 +143,12 @@
   
   - name: Debian | Add --ignore-preflight-errors
     become: false
-    lineinfile:
-      path: "{{ k8s_token_file }}"
-      insertafter: "^{{ join_command.stdout_lines[0] }}"
-      line: "--ignore-preflight-errors=all"
-      state: present
+    local_action:
+        module: lineinfile
+        dest: "{{ k8s_token_file }}"
+        insertafter: "^sha256:*"
+        line: "--ignore-preflight-errors=all"
+        state: present
   when: "'control' in group_names"
 
 - name: Debian | Configure K8S Node Block
