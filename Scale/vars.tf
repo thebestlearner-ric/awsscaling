@@ -1,9 +1,10 @@
 variable "vpc-id" {
-  default = "vpc-04a77969699adca04"
+  default = "vpc-01edb85c766461fcc"
 }
 variable "ami-id" {
-  default = "ami-0149b2da6ceec4bb0" # Ubuntu Server 20.04 LTS (HVM), SSD Volume Type (64-bit (x86))
-  # default = "ami-050406429a71aaa64" # Debian 11
+  #default = "ami-0149b2da6ceec4bb0" # Ubuntu Server 20.04 LTS (HVM), SSD Volume Type (64-bit (x86))
+  default = "ami-050406429a71aaa64" # Debian stretch
+  # default = "ami-065ebd2e530d438a8" # Debian stretch paid
 }
 variable "private_key_path" {
   default = "./mykey.pem"
