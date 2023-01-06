@@ -91,7 +91,7 @@
 
   - name: Debian | Install K8S dashboard {{ dashboard_config }}
     become: false
-    command: kubectl apply -f "{{ k8s_user_home }}/{{ dashboard_config }}"
+    command: kubectl apply -f "{{ k8s_user_home }}/{{ dashboard_config }}" --validate=false
     ignore_errors: true
   
   - name: Debian | Create service account
@@ -140,16 +140,20 @@
   - name: Debian | Copy join command to local file
     become: false
     local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="{{ k8s_token_file }}"
-  
-  - name: Debian | Add --ignore-preflight-errors
-    become: false
-    local_action:
-        module: lineinfile
-        dest: "{{ k8s_token_file }}"
-        insertafter: "^sha256:*"
-        line: "--ignore-preflight-errors=all"
-        state: present
   when: "'control' in group_names"
+  # - name: Debian | Add --ignore-preflight-errors
+  #   become: false
+  #   local_action:
+  #       module: lineinfile
+  #       dest: "{{ k8s_token_file }}"
+  #       insertbefore: "^--discovery-token-ca-cert-hash"
+  #       line: "--ignore-preflight-errors=all"
+  #       state: present
+  # - name: Debian | Append --ignore-preflight-errors
+  #   become: false 
+  #   local_action: cat "{{ k8s_token_file }}" | awk '{print $0, "--ignore-preflight-errors=all"}' | tee "{{ k8s_token_file }}"
+  #   #delegate_to: 127.0.0.1
+  
 
 - name: Debian | Configure K8S Node Block
   block:
@@ -168,6 +172,9 @@
       owner: "{{ k8s_user }}"
       group: "{{ k8s_user }}"
       mode: "0750"
+
+  - name: Debian | Append --ignore-preflight-errors 
+    shell: cat "{{ k8s_user_home }}/{{ k8s_token_file }}" | awk '{print $0, "--ignore-preflight-errors=all"}' | tee "{{ k8s_user_home }}/{{ k8s_token_file }}"
 
   - name: Debian | Join the node to cluster unless file {{ k8s_kubelet_config }} exists
     shell: sudo bash "{{ k8s_user_home }}/{{ k8s_token_file }}"
