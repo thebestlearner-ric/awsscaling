@@ -1,1 +1,1 @@
-kubeadm join 172.31.42.94:6443 --token 133m3p.72fjzxjln71iuxfq --discovery-token-ca-cert-hash sha256:37e4ac9a595f9f6807a7079ddf7503df95076d2504e9de70c36d82b39a566415
+kubeadm join 172.31.84.190:6443 --token rhfexe.dxzposokezduxe2s --discovery-token-ca-cert-hash sha256:bc45d887ed746cb855e376587bead961820e0c90fb668472ece8db980e58c1cc

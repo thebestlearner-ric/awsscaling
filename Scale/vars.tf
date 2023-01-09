@@ -1,5 +1,5 @@
 variable "vpc-id" {
-  default = "vpc-0547c20e6b5129ea3"
+  default = "vpc-065f3f09c8d471b0b"
 }
 variable "ami-id" {
   default = "ami-0149b2da6ceec4bb0" # Ubuntu Server 20.04 LTS (HVM), SSD Volume Type (64-bit (x86))

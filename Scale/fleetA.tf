@@ -82,6 +82,13 @@ resource "aws_security_group" "fleetAaccess" {
     description = "For remote access with ssh"
   }
   ingress {
+    from_port   = 6443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "For https"
+  }
+  ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -112,6 +119,13 @@ resource "aws_security_group" "fleetAaccess" {
   ingress {
     from_port   = 3306
     to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "For mysql access"
+  }
+  ingress {
+    from_port   = 5901
+    to_port     = 5901
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
     description = "For mysql access"
@@ -180,6 +194,7 @@ data "aws_availability_zones" "all" {}
 #     interpreter = ["/bin/sh", "-c"]
 #     enable_parallelism = false
 # }
+
 resource "aws_instance" "kube_controller" {
   ami                         = var.ami-id
   instance_type               = var.instance_type
