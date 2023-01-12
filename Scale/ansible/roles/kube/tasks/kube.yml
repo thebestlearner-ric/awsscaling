@@ -29,16 +29,6 @@
   - name: set export 
     ansible.builtin.shell: export KUBECONFIG=/etc/kubernetes/admin.conf
 
-  # - name: Installing Flannel
-  #   become: false
-  #   command: "kubectl apply -f {{ flannel_url }}"
-  #   ignore_errors: true
-  
-  # - name: Installing Weave
-  #   become: false
-  #   command: "kubectl apply -f {{ weave_url }}"
-  #   ignore_errors: true
-
   - name: Debian | Download {{ calico_rbac_url }}
     get_url:
       url: "{{ calico_rbac_url }}"
@@ -141,33 +131,7 @@
     become: false
     local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="{{ k8s_token_file }}"
   
-  - name: Configure VNC server
-    shell:  vncserver :1
   
-  - name: Edit VNC configure file
-    shell: |
-    cat > "{{ k8s_user_home }}"/~/.vnc/xstartup <<EOF
-    #!/bin/sh
-
-    export XKL_XMODMAP_DISABLE=1
-    unset SESSION_MANAGER
-    unset DBUS_SESSION_BUS_ADDRESS
-
-    [ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
-    [ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
-    xsetroot -solid grey
-
-    vncconfig -iconic &
-    gnome-panel &
-    gnome-settings-daemon &
-    metacity &
-    nautilus &
-    gnome-terminal &
-    EOF
-  - name: Restart VNC server
-    shell: | 
-    vncserver -kill :1
-    vncserver :1
   when: "'control' in group_names"
   # - name: Debian | Add --ignore-preflight-errors
   #   become: false
