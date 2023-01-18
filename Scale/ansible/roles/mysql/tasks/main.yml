@@ -1,4 +1,59 @@
 ---
 # tasks file for mysql
-- name: Run mysql
-# TODO: run docker compose and verify that docker image is working
+- name: mysql | Setup
+  block:
+  - name: Create mysql yml file
+    become: false
+    ansible.builtin.shell: kubectl create deployment {{ mysql_filename }} --image=docker.io/{{ mysql_version }} --dry-run -o yaml > {{ mysql_filename }}.{{ yml_extension }}
+    
+  # TODO: run docker compose and verify that docker image is working
+  # edit to create a horizontal scaling mysql
+  - name: Edit {{ mysql_filename }}
+    ansible.builtin.shell: |
+      cat <<EOF > {{ mysql_filename }}.{{ yml_extension }}
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: mydb
+        name: mydb
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: mydb
+        strategy: {}
+        template:
+          metadata:
+            creationTimestamp: null
+            labels:
+              app: mydb
+          spec:
+            containers:
+            - image: docker.io/mysql:5.6
+              name: mysql
+              env:
+              - name: MYSQL_ROOT_PASSWORD
+                value: centos
+              - name: MYSQL_DATABASE
+                value: simpli
+              resources: {}
+      status: {}
+      EOF
+
+  - name: Create sql deployment
+    become: false
+    command: kubectl create -f {{ mysql_filename }}.{{ yml_extension }}
+# expose my sql 3306 
+  - name: ETCD | install etcd-client
+    become: true
+    apt: etcd-client
+  
+  #get master internet ip address
+  #export to advertise_url
+
+  - name: ETCD | take etcd snapshot
+    ansible.builtin.shell: sudo  ETCDCTL_API=3 etcdctl --endpoints $advertise_url --cacert /etc/kubernetes/pki/etcd/ca.crt --key /etc/kubernetes/pki/etcd/server.key --cert /etc/kubernetes/pki/etcd/server.crt snapshot status test1.db  --write-out=table
+
+  when: "'control' in group_names"

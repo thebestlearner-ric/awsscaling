@@ -1,2 +1,5 @@
 ---
 # vars file for mysql
+mysql_filename: "mydb"
+yml_extension: "yml"
+mysql_version: "mysql:5.6"
