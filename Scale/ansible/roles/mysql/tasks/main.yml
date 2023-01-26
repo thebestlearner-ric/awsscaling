@@ -47,8 +47,14 @@
     command: kubectl create -f {{ mysql_filename }}.{{ yml_extension }}
 # expose my sql 3306 
   - name: ETCD | install etcd-client
-    become: true
-    apt: etcd-client
+    apt:
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+      allow_downgrade: yes
+    vars:
+      packages:
+      - etcd-client
   
   #get master internet ip address
   #export to advertise_url

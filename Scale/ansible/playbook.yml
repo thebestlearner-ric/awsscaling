@@ -12,5 +12,5 @@
     # - create-user
     # - packages
     # - docker
-    # - kube
-    - mysql
+    - kube
+    # - mysql
