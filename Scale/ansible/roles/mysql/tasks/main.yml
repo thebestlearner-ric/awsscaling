@@ -2,10 +2,7 @@
 # tasks file for mysql
 - name: mysql | Setup
   block:
-  - name: Create mysql yml file
-    become: false
-    ansible.builtin.shell: kubectl create deployment {{ mysql_filename }} --image=docker.io/{{ mysql_version }} --dry-run -o yaml > {{ mysql_filename }}.{{ yml_extension }}
-    
+  #   
   # TODO: run docker compose and verify that docker image is working
   # edit to create a horizontal scaling mysql
   - name: Edit {{ mysql_filename }}

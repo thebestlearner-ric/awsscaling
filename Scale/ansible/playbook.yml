@@ -9,8 +9,8 @@
   #   wp_install_dir: "/var/www/example.com"
   roles:
     # - ansible-nginx
-    # - create-user
-    # - packages
-    # - docker
+    - create-user
+    - packages
+    - docker
     - kube
-    # - mysql
+    - mysql
