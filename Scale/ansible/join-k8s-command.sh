@@ -1,1 +1,1 @@
-kubeadm join 172.31.36.200:6443 --token 91deim.qn972xoucaoqb4pk --discovery-token-ca-cert-hash sha256:1cf69eb04e53546839d13bbb4cff82e202fae71593577f05087de0e9a649158c
+kubeadm join 172.31.36.200:6443 --token ytdy0i.00ysr842n5517c7x --discovery-token-ca-cert-hash sha256:a12c0e8658d97492884ed66b021b5a6da8a1fec31a6ef23631ba31641b935096
