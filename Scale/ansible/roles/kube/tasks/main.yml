@@ -40,11 +40,11 @@
     allow_downgrade: yes
   vars:
     packages:
-      - kubelet=1.13.1-00
-      # - kubelet
-      - kubeadm=1.13.1-00
-      # - kubeadm
-      - kubernetes-cni=0.6.0-00 
+      # - kubelet=1.13.1-00
+      - kubelet
+      # - kubeadm=1.13.1-00
+      - kubeadm
+      # - kubernetes-cni=0.6.0-00 
 
 - name: update iptables to see bridged traffic
   ansible.builtin.shell: |
@@ -85,8 +85,8 @@
 - name: install kubectl on control plane
   when: inventory_hostname in groups['control']
   apt:
-    name: kubectl=1.13.1-00
-    # name: kubectl
+    # name: kubectl=1.13.1-00
+    name: kubectl
     state: present
     force: yes
 

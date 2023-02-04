@@ -43,7 +43,15 @@
       dest: "{{ k8s_user_home }}/{{ calico_net_config }}"
       owner: "{{ k8s_user }}"
       group: "{{ k8s_user }}"
-      mode: "0640"     
+      mode: "0640"   
+
+  - name: Debian | Download {{ weave_url }}
+    get_url:
+      url: "{{ weave_url }}"
+      dest: "{{ k8s_user_home }}/{{ weave_net_config }}"
+      owner: "{{ k8s_user }}"
+      group: "{{ k8s_user }}"
+      mode: "0640"   
 
   - name: Debian | Set CALICO_IPV4POOL_CIDR to {{ k8s_pod_network }}
     replace:
@@ -59,25 +67,20 @@
       group: "{{ k8s_user }}"
       mode: "0640"     
 
-  # - name: Debian | Create calico tigera operator 
-  #   become: false
-  #   command: kubectl create -f "{{ calico_tigera_operator_url }}"
-  #   ignore_errors: true
-  
-  # - name: Debian | Create calico custom_resources
-  #   become: false
-  #   command: kubectl create -f "{{ calico_custom_resources_url }}"
-  #   ignore_errors: true
-
   - name: Debian | Install calico pod network {{ calico_rbac_config }}
     become: false
-    command: kubectl apply -f "{{ k8s_user_home }}/{{ calico_rbac_config }}"
+    command: kubectl apply -f "{{ k8s_user_home }}/{{ weave_net_config }}"
     ignore_errors: true
+
+  # - name: Debian | Install calico pod network {{ calico_rbac_config }}
+  #   become: false
+  #   command: kubectl apply -f "{{ k8s_user_home }}/{{ calico_rbac_config }}"
+  #   ignore_errors: true
   
-  - name: Debian | Install calico pod network {{ calico_net_config }}
-    become: false
-    command: kubectl apply -f "{{ k8s_user_home }}/{{ calico_net_config }}"
-    ignore_errors: true
+  # - name: Debian | Install calico pod network {{ calico_net_config }}
+  #   become: false
+  #   command: kubectl apply -f "{{ k8s_user_home }}/{{ calico_net_config }}"
+  #   ignore_errors: true
 
   - name: Debian | Install K8S dashboard {{ dashboard_config }}
     become: false
@@ -93,14 +96,32 @@
     become: false
     command: kubectl create clusterrolebinding dashboard-admin -n default --clusterrole=cluster-admin --serviceaccount=default:dashboard
     ignore_errors: true
-  
-  - name: Debian | Create {{ k8s_dashboard_adminuser_config }} for service account
-    copy:
-      src: "files/{{ k8s_dashboard_adminuser_config }}"
-      dest: "{{ k8s_user_home }}/{{ k8s_dashboard_adminuser_config }}"
-      owner: "{{ k8s_user }}"
-      group: "{{ k8s_user }}"
-      mode: "0640"
+
+  - name: Grant Admin Rights to service account
+    shell: |
+      cat <<EOF | kubectl create -f -
+        apiVersion: rbac.authorization.k8s.io/v1beta1
+        kind: ClusterRoleBinding
+        metadata:
+          name: kubernetes-dashboard
+          labels:
+            k8s-app: kubernetes-dashboard
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: cluster-admin
+        subjects:
+        - kind: ServiceAccount
+          name: kubernetes-dashboard
+          namespace: kubernetes-dashboard
+      EOF
+  # - name: Debian | Create {{ k8s_dashboard_adminuser_config }} for service account
+  #   copy:
+  #     src: "files/{{ k8s_dashboard_adminuser_config }}"
+  #     dest: "{{ k8s_user_home }}/{{ k8s_dashboard_adminuser_config }}"
+  #     owner: "{{ k8s_user }}"
+  #     group: "{{ k8s_user }}"
+  #     mode: "0640"
   #TODO edit dashboard from clusterIP to nodePort
   - name: Debian | Create service account
     become: false
