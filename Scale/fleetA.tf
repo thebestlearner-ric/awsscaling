@@ -2,6 +2,7 @@ variable "region" {
   description = "availability regions"
 }
 
+
 resource "aws_security_group" "fleetAControlaccess" {
   name   = "fleetAControlaccess"
   vpc_id = var.vpc-id
@@ -202,6 +203,28 @@ data "aws_availability_zones" "all" {}
 #     enable_parallelism = false
 # }
 
+# resource "aws_lb_target_group" "tg" {
+#   name     = "tf-example-lb-tg"
+#   port     = 8443
+#   protocol = "HTTP"
+#   vpc_id   = var.vpc-id
+# }
+
+# resource "aws_lb" "kube_lb" {
+#   name               = "kubeLoadBalancer"
+#   load_balancer_type = "network"
+#   subnet_mapping {
+#     subnet_id = local.instance_subnet_id
+#     allocation_id = aws_eip.kube_controller_eip.id
+#   }
+
+# }
+
+resource "aws_eip" "kube_controller_eip" {
+  instance = aws_instance.kube_controller.id
+  vpc      = true
+}
+
 resource "aws_instance" "kube_controller" {
   ami                         = var.ami-id
   instance_type               = var.instance_type
@@ -213,41 +236,63 @@ resource "aws_instance" "kube_controller" {
   }
 }
 
-resource "aws_launch_configuration" "asg-launch-config" {
-  image_id                    = var.ami-id
+resource "aws_instance" "kube_worker1" {
+  ami                         = var.ami-id
   instance_type               = var.instance_type
-  security_groups             = [aws_security_group.fleetAControlaccess.id, aws_security_group.fleetAaccess.id]
-  key_name                    = var.key_name
   associate_public_ip_address = true
-  # user_data = file("Scale/install_nginx.sh")
-  # user_data = file("Scale/get_ag_ip.sh")
+  vpc_security_group_ids      = [aws_security_group.fleetAControlaccess.id, aws_security_group.fleetAaccess.id]
+  key_name                    = var.key_name
   lifecycle {
     create_before_destroy = true
   }
 }
 
-# Creating the autoscaling group within us-east-1a availability zone
-resource "aws_autoscaling_group" "autoscalefleetA" {
-  # Defining the availability Zone in which AWS EC2 instance will be launched
-  availability_zones = ["us-east-1a"]
-  #availability_zones = data.aws_availability_zones.all.names
-  # Specifying the name of the autoscaling group
-  name = "fleetA"
-  # Defining the maximum number of AWS EC2 instances while scaling
-  max_size = 6
-  # Defining the minimum number of AWS EC2 instances while scaling
-  min_size = 2
-  # Grace period is the time after which AWS EC2 instance comes into service before checking health.
-  health_check_grace_period = 30
-  # The Autoscaling will happen based on health of AWS EC2 instance defined in AWS CLoudwatch Alarm 
-  health_check_type = "EC2"
-  # force_delete deletes the Auto Scaling Group without waiting for all instances in the pool to terminate
-  force_delete = true
-  # Defining the termination policy where the oldest instance will be replaced first 
-  termination_policies = ["OldestInstance"]
-  # Scaling group is dependent on autoscaling launch configuration because of AWS EC2 instance configurations
-  launch_configuration = aws_launch_configuration.asg-launch-config.name
+resource "aws_instance" "kube_worker2" {
+  ami                         = var.ami-id
+  instance_type               = var.instance_type
+  associate_public_ip_address = true
+  vpc_security_group_ids      = [aws_security_group.fleetAControlaccess.id, aws_security_group.fleetAaccess.id]
+  key_name                    = var.key_name
+  lifecycle {
+    create_before_destroy = true
+  }
 }
+
+# resource "aws_launch_configuration" "asg-launch-config" {
+#   image_id                    = var.ami-id
+#   instance_type               = var.instance_type
+#   security_groups             = [aws_security_group.fleetAControlaccess.id, aws_security_group.fleetAaccess.id]
+#   key_name                    = var.key_name
+#   associate_public_ip_address = true
+#   # user_data = file("Scale/install_nginx.sh")
+#   # user_data = file("Scale/get_ag_ip.sh")
+#   lifecycle {
+#     create_before_destroy = true
+#   }
+# }
+
+# # Creating the autoscaling group within us-east-1a availability zone
+# resource "aws_autoscaling_group" "autoscalefleetA" {
+#   # Defining the availability Zone in which AWS EC2 instance will be launched
+#   availability_zones = ["us-east-1a"]
+#   #availability_zones = data.aws_availability_zones.all.names
+#   # Specifying the name of the autoscaling group
+#   name = "fleetA"
+#   # Defining the maximum number of AWS EC2 instances while scaling
+#   max_size = 6
+#   # Defining the minimum number of AWS EC2 instances while scaling
+#   min_size = 2
+#   # Grace period is the time after which AWS EC2 instance comes into service before checking health.
+#   health_check_grace_period = 30
+#   # The Autoscaling will happen based on health of AWS EC2 instance defined in AWS CLoudwatch Alarm 
+#   health_check_type = "EC2"
+#   # force_delete deletes the Auto Scaling Group without waiting for all instances in the pool to terminate
+#   force_delete = true
+#   # Defining the termination policy where the oldest instance will be replaced first 
+#   termination_policies = ["OldestInstance"]
+#   # Scaling group is dependent on autoscaling launch configuration because of AWS EC2 instance configurations
+#   launch_configuration = aws_launch_configuration.asg-launch-config.name
+# }
 
 # output "instance_ip" {
 #   value = aws_instance.kube_controller.public_ip
