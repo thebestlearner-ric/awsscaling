@@ -24,6 +24,9 @@ spec:
               key: password
         ports:
         - containerPort: 3306
+        resources:
+          requests:
+            cpu: 200m
           name: mysql
         volumeMounts:
         - name: mysql-persistent-storage
